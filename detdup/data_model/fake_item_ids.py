@@ -49,12 +49,13 @@ class FakeItemIds(object):
         # 2. 从feature索引中删除
         item1 = self.data_model.get(item_id, None)
         if item1 is None:
-            return  # compact with unkonw error TODO 20150430
+            return False  # compact with unkonw error TODO 20150430
         table = self.data_model.core.select_feature(item1).features_tree
         table.delete().where(table.item_id == str(item_id)).execute()
 
         # 3. 从items_model中删除
         del self.data_model[item_id]
+        return True
 
     def remove_all(self):
         delete_scope = self.storage.select().where(

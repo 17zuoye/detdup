@@ -1,5 +1,11 @@
 DetDup
 ======================
+[![Build Status](https://img.shields.io/travis/17zuoye/detdup/master.svg?style=flat)](https://travis-ci.org/17zuoye/detdup)
+[![Coverage Status](https://coveralls.io/repos/17zuoye/detdup/badge.svg)](https://coveralls.io/r/17zuoye/detdup)
+[![Health](https://landscape.io/github/17zuoye/detdup/master/landscape.svg?style=flat)](https://landscape.io/github/17zuoye/detdup/master)
+[![Download](https://img.shields.io/pypi/dm/detdup.svg?style=flat)](https://pypi.python.org/pypi/detdup)
+[![License](https://img.shields.io/pypi/l/detdup.svg?style=flat)](https://pypi.python.org/pypi/detdup)
+
 Detect duplicated items. 内容排重框架。
 
 Usage
