@@ -1,3 +1,6 @@
 run
 ===================
-`python tests/test.py`
+```bash
+pip install nose
+nosetests
+```
