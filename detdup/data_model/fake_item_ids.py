@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from peewee import SqliteDatabase, Model, CharField, BooleanField, TextField, TimeField
-import os, datetime
+import os
+import datetime
+
 
 class FakeItemIds(object):
-    """ Manage fake item ids and their cache and index. """
+    """
+    Manage fake item ids and their cache and index.
+
+    Client send item with no item id, so we need to make a fake item id for it, cause index db need one.
+
+    TODO: while just not delete it after query immediately, not until the next query coming.
+    """
 
     def __init__(self, data_model):
         self.data_model = data_model
@@ -14,11 +22,12 @@ class FakeItemIds(object):
         sqlite_path = os.path.join(self.data_model.cache_dir, "fake_item_ids_store.db")
 
         sqlite_database = SqliteDatabase(sqlite_path, check_same_thread=False)
+
         class FakeItemIdsStore(Model):
-            is_deleted          = BooleanField(default=False) # mark processed or duplicated items
-            item_id             = CharField()
-            item_content_json   = TextField()
-            created_at          = TimeField(default=datetime.datetime.now)
+            is_deleted = BooleanField(default=False)  # mark processed or duplicated items
+            item_id = CharField()
+            item_content_json = TextField()
+            created_at = TimeField(default=datetime.datetime.now)
 
             class Meta:
                 database = sqlite_database
@@ -38,7 +47,9 @@ class FakeItemIds(object):
         self.storage.update(is_deleted=True).where(self.storage.item_id == str(item_id)).execute()
 
         # 2. 从feature索引中删除
-        item1 = self.data_model[item_id]
+        item1 = self.data_model.get(item_id, None)
+        if item1 is None:
+            return  # compact with unkonw error TODO 20150430
         table = self.data_model.core.select_feature(item1).features_tree
         table.delete().where(table.item_id == str(item_id)).execute()
 
@@ -46,5 +57,7 @@ class FakeItemIds(object):
         del self.data_model[item_id]
 
     def remove_all(self):
-        delete_scope = self.storage.select().where(self.storage.is_deleted == False)
-        for i1 in delete_scope: self.remove(i1.item_id)
+        delete_scope = self.storage.select().where(
+            self.storage.is_deleted == eval("False"))  # compact with PEP E712
+        for i1 in delete_scope:
+            self.remove(i1.item_id)
